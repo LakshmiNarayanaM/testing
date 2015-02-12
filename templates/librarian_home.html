@@ -1,0 +1,63 @@
+{% extends "index.html" %}
+{% load lib_tags %}
+{% block header %}
+<!-- start header -->
+<div id="header">
+	<div id="menu">
+		<ul>
+			<li class="active"><a href="#">Library</a></li>
+		</ul>
+	</div>
+	<div id="logo">
+		<h1><a href="/librarian/">Librarian</a></h1>
+		<h2><a href="/librarian/">home</a></h2>
+	</div>
+</div>
+{% endblock %}
+{% block mid %}
+<p align="right">{{ request.user.username}}&nbsp;<a href="/logout/">Logout</a>
+<div id="content">
+
+{% if item_list %}
+<h3> Book list:</h3>
+<ul>
+{% for j in item_list %}
+    <li>{{j.title}} - {{j.author }} - {{j.publisher}} 
+                        {% with j.id|get_book_status as bs %}
+                            {% if bs %}
+                            <a href="#" onclick="smallpopup('/issue/{{j.id}}/')" class="issue">ISSUE</a>
+                            {% else %}
+                            <span style="color:red;">Out Of stock</span>
+                            {% endif %}
+                        {% endwith %}
+    </li>
+
+{% endfor %}
+</ul>
+{% else %}
+<p>Search result not found</p>
+{% endif %}
+</div>
+{% endblock %}
+{% block rightcontent %}
+<div id="sidebar">
+		<ul>
+		    <li><a href="/librarian/receive_book/" class="rce" style="margin-left: 40px;">Recieve a Book</a></li>
+			<li>
+				<h2>Search Books</h2>
+				<form method="get" action="">
+					<input type="text" id="s" name="search" value="" />
+					<input type="submit" id="x" value="Search" />
+				</form>
+			</li>
+			<li>
+			<h2>Search By Category</h2>
+				<ul>
+					{% for i in categories %}
+					    <li><a href="/librarian/?c={{i.id}}">{{i.name}}</a></li>
+					{% endfor %}
+				</ul>
+			</li>
+		</ul>
+	</div>
+{% endblock %}

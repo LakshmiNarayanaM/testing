@@ -1,0 +1,18 @@
+from django import template
+from library.models import *
+from datetime import *
+from django.contrib.auth.models import User
+from library.views import *
+from django.db.models import Q
+
+register = template.Library()
+
+@register.filter
+def get_book_status(value):
+    book = Book.objects.get(id=value)
+    bc = BooksCopies.objects.get(book=book)
+    bb = Books_Borrowed.objects.filter(book=book, status__in= [0,2,3])
+    if bc.num_of_copies == bb.count():
+        return False
+    else:
+        return True

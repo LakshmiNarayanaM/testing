@@ -1,0 +1,74 @@
+{% extends "index.html" %}
+{% load lib_tags %}
+{% block mid %}
+<div id="content">
+<p align="right">{{ request.user.username}}&nbsp;<a href="/logout/">Logout</a>
+
+    {% if std %}
+        <h3>{{std.child.first_name}} {{std.child.last_name}} - {{std.child.uid}}</h3>
+        {% if bb %}
+           <table width="100%" border="0" cellspacing="0" cellpadding="0" class="ctab">
+                <tr bgcolor="#f2f2f2">
+                    <th align="center" class="c1"><b>Book</b></th>
+                    <th align="center" class="c1"><b>Issued Date</b></th>
+                    <th align="center" class="c1"><b>Submission Date</b></th>
+                    <th align="center" class="c1"><b>Action</b></th>
+                </tr>
+            {% for i in bb %}
+                <tr bgcolor="#fff">
+                    <td align="center" class="c1">{{i}}</td>
+                    <td align="center" class="c1">{{i.issue_date}}</td>
+                    <td align="center" class="c1">{{i.return_date}}</td>
+                    <td align="center" class="c1"><a href="/recieved/{{i.id}}/?next={{request.get_full_path}}">Recieve</a></td>
+                </tr>
+            {% endfor %}
+            </table>
+            <br/>
+        {% else %}
+        <h3> There is history of this student </h3>
+        {% endif %}
+
+    {% else %}
+
+        {% if staff %}
+            <h3>{{staff.first_name}} {{staff.last_name}} - {{staff.uid}}</h3>
+            {% if bb %}
+               <table width="100%" border="0" cellspacing="0" cellpadding="0" class="ctab">
+                    <tr bgcolor="#f2f2f2">
+                        <th align="center" class="c1"><b>Book</b></th>
+                        <th align="center" class="c1"><b>Issued Date</b></th>
+                        <th align="center" class="c1"><b>Submission Date</b></th>
+                        <th align="center" class="c1"><b>Action</b></th>
+                    </tr>
+                {% for i in bb %}
+                    <tr bgcolor="#fff">
+                        <td align="center" class="c1">{{i}}</td>
+                        <td align="center" class="c1">{{i.issue_date}}</td>
+                        <td align="center" class="c1">{{i.return_date}}</td>
+                        <td align="center" class="c1"><a href="/recieved/{{i.id}}/?next={{request.get_full_path}}">Recieve</a></td>
+                    </tr>
+                {% endfor %}
+                </table>
+                <br/>
+            {% else %}
+            <h3> There is history of this student </h3>
+            {% endif %}
+        {% else %}
+            <p> {{ error}} </p>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+{% block rightcontent %}
+<div id="sidebar">
+		<ul>
+			<li>
+				<h2>Search student/staff</h2>
+				<form method="get" action="">
+					<input type="text" id="s" placeholder="Enter student ID" name="student" value="" />
+					<input type="submit" id="x" value="Search" />
+				</form>
+			</li>
+		</ul>
+	</div>
+{% endblock %}

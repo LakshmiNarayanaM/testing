@@ -1,0 +1,38 @@
+{% extends "index.html" %}
+{% block header %}
+<!-- start header -->
+
+<div id="header">
+	<div id="menu">
+		<ul>
+			<li class="active"><a href="#">Library</a></li>
+		</ul>
+	</div>
+	<div id="logo">
+	        {% if usertype.user_type.name == 'Staff' %}
+		<h1><a href="/staff/">Staff</a></h1>
+		<h2><a href="/staff/">Home</a></h2> 
+		{% elif usertype.user_type.name == 'Student' %}
+                <h1><a href="/student/">Student</a></h1>
+		<h2><a href="/student/">Home</a></h2> 
+                {% endif %}
+	</div>
+</div>
+{% endblock %}
+
+{% block mid %} 
+    <div id="content">
+        <p> Your request is submiited, once we get the requested book librarian will <br />
+        notify you</p>
+        {% if usertype.user_type.name == 'Staff' %}
+                <a href="/staff/"> 
+        {% elif usertype.user_type.name == 'Student' %}
+                <a href="/student/"> 
+        {% endif %}
+        Click here to go your home page </a> <br /> <br />
+    </div>
+{% endblock %}
+
+{% block rightcontent %}
+
+{% endblock %}

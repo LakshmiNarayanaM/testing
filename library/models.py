@@ -1,0 +1,123 @@
+from django.db import models
+from schools.models import *
+from fullhistory import register_model
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+from django.utils.translation import ugettext_lazy as _
+
+
+BOOK_STATUS_CHOICES =  [
+    (0, 'Issued'),
+    (1, 'Recieved'),
+    (2, 'Waiting'),
+    (3, 'Lost'),
+    ]
+
+class Base(models.Model):
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
+    active = models.IntegerField(default=2)
+
+    def __unicode__(self):
+        return self.active
+
+class BookCategory(Base):
+    institution = models.ForeignKey(Institution)
+    name = models.CharField(max_length = 100)
+
+    def __unicode__(self):
+        return self.name
+
+    def get_books(self):
+        
+        return Book.objects.filter(book_category=self)
+
+class Book(Base):
+    institution = models.ForeignKey(Institution)
+    book_category = models.ForeignKey(BookCategory)
+    title = models.CharField(max_length=100)
+    author = models.CharField(max_length=100)
+    publisher = models.TextField(blank=True,null=True)
+    keyword = models.CharField(max_length=100, blank=True, null=True)
+    isbn_code = models.CharField(max_length=100)
+    year_of_pub = models.DateField()
+
+    def __unicode__(self):
+        return self.title
+
+
+class BooksCopies(Base):
+    book = models.ForeignKey(Book)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    num_of_copies = models.IntegerField(default=0, null=True)
+
+    def __unicode__(self):
+        return self.book.title
+
+
+class LibraryUsersType(Base):
+    institution = models.ForeignKey(Institution)
+    name = models.CharField(max_length = 10)
+
+    def __unicode__(self):
+        return self.name
+
+
+class LibraryUsers(Base):
+    user_type = models.ForeignKey(LibraryUsersType)
+    user = models.ForeignKey(User)
+
+    def __unicode__(self):
+        return '%s - %s' %(self.user_type.name, self.user.username)
+
+    class Meta:
+        unique_together = (('user_type', 'user'), )
+        verbose_name_plural = 'Library Users'
+
+class Books_Borrowed(Base):
+    book = models.ForeignKey(Book)
+    issue_date = models.DateField(blank=True, null=True)
+    return_date = models.DateField(blank=True, null=True)
+    content_type = models.ForeignKey(ContentType, verbose_name=_('content type'), related_name="content_type_set_for_%(class)s")
+    object_id = models.TextField(_('object ID'))
+    relatedTo = generic.GenericForeignKey(ct_field="content_type", fk_field="object_id")
+    lost = models.BooleanField(default=False)
+    scratched = models.BooleanField(default=False)
+    status = models.IntegerField(default=0, choices=BOOK_STATUS_CHOICES)
+
+    def __unicode__ (self):
+        return self.book.title
+
+
+class BookRequest(Base):
+    book = models.ForeignKey(Book, blank=True, null=True)
+    request_date = models.DateField(default = datetime.date.today)
+    book_name = models.CharField(max_length=100 , editable = False)
+    author  = models.CharField(max_length = 100 , editable = False)
+    return_date = models.DateField(null = True, blank = True)
+    requested_by = models.ForeignKey(User, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.book_name
+
+class AdvanceBook(Base):
+    book = models.ForeignKey(Book, blank=True, null=True)
+    from_date = models.DateField()
+    end_date = models.DateField()
+    booked_by = models.ForeignKey(User, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.book.title
+
+class Fine(models.Model):
+    req = models.ForeignKey(BookRequest,blank=True, null=True)
+    book = models.ForeignKey(Book)
+    fine_Type = models.CharField(max_length = 100)
+    amount = models.IntegerField(max_length = 4)
+    date = models.DateField('Date of fine payment',null = True, blank = True)
+    paid = models.BooleanField(default = False)
+    fined_to = models.ForeignKey(User, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.book.title

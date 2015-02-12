@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>{% block title %}
+
+{% endblock %} - ZenEdu
+</title>
+
+<style type="text/css">
+ .contenttable {text-align:left;width:950px;}
+ .tabletop {text-align:left;padding:10px 0px;font-weight:bold;font-size:16px;}
+</style>
+
+<link href="/static/css/bysstyle.css" rel="stylesheet" type="text/css" />
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+
+<script type="text/javascript" src="/static/js/jquery-1.7.2.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.datepick.js"> </script>
+<script type="text/javascript">
+function surveypopup(url)
+{
+	window.open(url,"Add Survey","status=1,height=550,width=578,left=500,top=250,scrollbars=yes,resizable=0")
+}
+function productpopup(url)
+{
+	window.open(url,"Add Survey","status=1,height=780,width=900,left=500,top=250,scrollbars=yes,resizable=0")
+}
+</script>
+
+<script type="text/javascript">
+<!--
+function close_window()
+
+{
+
+window.close();
+if (window.opener && !window.opener.closed) {
+        window.opener.location.reload();
+    }
+}
+//-->
+</script>
+
+<script type="text/javascript">
+function confirm_box(url)
+{
+var r=confirm("Are you sure want to delete ?");
+if (r==true)
+  {
+  window.location=url
+  }
+
+}
+</script>
+</head>
+
+<body style="width:650px;">
+<div class="container">
+    <div class="top" style="background:#417690;">
+        <div class="topbar">
+            <div class="logo"></div>
+        </div>
+    </div>
+</div>
+<div class="main" style="width:650px;">
+<div class="mid" style="width:630px;">
+{% block midpart %} {% endblock %}
+</div>
+<div>
+<div class="nav">
+</div>
+</div>
+</body>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $("#id_valid_till").datepick({
+           dateFormat: 'yyyy-mm-dd',
+           changeMonth: true,
+           changeYear: true,
+           minDate:1,
+           });
+
+       $('#id_valid_from,#id_valid_to').datepick({ 
+           dateFormat: 'yyyy-mm-dd',
+           changeMonth: true,
+           changeYear: true,
+           minDate:0,
+           });
+
+        $("#id_expires").datepick({
+           dateFormat: 'yyyy-mm-dd',
+           changeMonth: true,
+           changeYear: true,
+           minDate:0,
+           });
+       });
+</script>
+<script type="text/javascript">
+    function video_valid(){
+        var date = new Date();
+        var valid_till=document.getElementById('id_valid_till').value;
+        alert(valid_till);
+        if (valid_till < new Date(date.getFullYear(), date.getMonth(), date.getDate()))
+        {
+            alert('Valid till must be greater than today.');
+            return false;
+        }
+        return true;
+}
+	
+</script>
+</html>
+
+

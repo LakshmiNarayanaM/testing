@@ -1,0 +1,71 @@
+{% extends "index.html" %}
+{% block header %}
+<!-- start header -->
+
+<div id="header">
+	<div id="menu">
+		<ul>
+			<li class="active"><a href="#">Library</a></li>
+		</ul>
+	</div>
+	<div id="logo">
+		<h1><a href="/deo/">DEO</a></h1>
+		<h2><a href="/deo/">Home</a></h2> 
+	</div>
+</div>
+{% endblock %}
+
+{% block mid %}
+<p align="right">{{ request.user.username}}&nbsp;<a href="/logout/">Logout</a>
+<div id="content">
+
+{% if not search %}<a href="#" onclick="productpopup('/deo/add_book/?id={{institution.id}}')" class="addbook">+ Add Book</a> {% endif %}
+
+{% if search and books %}
+    <p> Results based on your search </p><br />
+        {% for i in books %}
+            <ul><li>{{i.title}}</li></ul>
+        {% endfor %}
+{% else %}
+    {% for i in categories %}
+    <li>
+    <h3>{{i.name}}</h3>
+		    <ul>
+			    {% for j in i.get_books %}
+			    <li>{{j.title}} - {{j.author }} - {{j.publisher}}&nbsp;&nbsp; <a href="#" onclick="productpopup('/deo/edit_book/?book_id={{j.id}}&id={{institution.id}}')" >   Edit</a> {% if j.active == 2 %}| <a href = "#" onclick="confirm_box('/deo/remove_book/?book_id={{j.id}}')"> Remove </a> {% endif %} </li>
+			    {% endfor %}
+		    </ul>
+    </li>
+    {% endfor %}
+
+{% endif %}
+
+</div>
+{% endblock %}
+
+{% block rightcontent %}
+	<div id="sidebar">
+		<ul>
+			<li id="search">
+				<h2>Search Books</h2>
+				<form method="get" action="/deo/">
+					<input type="text" id="s" name="search" value="" />
+					<input type="submit" id="x" value="Search" />
+				</form>
+			</li>
+			<li><a href="#" onclick="productpopup('/deo/add_bookcategory/?id={{institution.id}}')" class="addbook">+ Add </a>
+				<h2>Book Categories  </h2>
+				
+				<ul>
+				        {% for i in RightBarcategories %}
+					        <li><a href="/deo/?cat_id={{i.id}}">{{ i.name }}</a> | <a href="#" onclick="productpopup('/deo/edit_bookcategory/?cat_id={{i.id}}&id={{institution.id}}')" >   Edit</a>  {% if i.active == 2 %}| <a href = "#" onclick="confirm_box('/deo/remove_book/?cat_id={{i.id}}')"> Remove </a> {% endif %}</li>
+				        {% endfor %}
+					
+				</ul>
+			</li>
+
+		</ul>
+	</div>
+
+	<!-- end sidebar -->
+{% endblock %}

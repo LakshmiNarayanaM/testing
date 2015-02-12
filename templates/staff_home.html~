@@ -1,0 +1,61 @@
+{% extends "index.html" %}
+{% block header %}
+<!-- start header -->
+
+<div id="header">
+	<div id="menu">
+		<ul>
+			<li class="active"><a href="#">Library</a></li>
+		</ul>
+	</div>
+	<div id="logo">
+		<h1><a href="/staff/">Staff</a></h1>
+		<h2><a href="/staff/">Home</a></h2> 
+	</div>
+</div>
+{% endblock %}
+{% block mid %}
+<div id="content">
+{% if search and books %}
+    <p> Results based on your search </p><br />
+        {% for i in books %}
+            <ul><li>{{i.title}}&nbsp; <a href="#" onclick="productpopup('/staff/advance_booking/?book_id={{i.id}}')"> Book Now</a></li>
+            </ul>
+        {% endfor %}
+{% else %}
+    {% if latest_books %}
+            {% for bk in latest_books %}
+                 <ul><li>{{bk.title}}</li></ul> 
+            {% endfor %}
+    {% endif %}
+{% endif %}
+</div>
+{% endblock %}
+
+{% block rightcontent %}
+	<div id="sidebar">
+		<ul>
+			<li id="search">
+				<h2>Search Books for advance booking</h2>
+				<form method="get" action="/staff/">
+					<input type="text" id="s" name="search" value="" />
+					<input type="submit" id="x" value="Search" />
+				</form>
+			</li>
+			<li>
+				<h2>Request For Book</h2>
+				<ul>
+                    <form method="POST" action="/staff/request-for-book/"> {% csrf_token %}
+                        <table>
+                            <tr><td>Book Name:</td> <td><input type="text" name="bookname" required/> </td></tr>
+                            <tr><td>Author:</td> <td><input type="text" name="author" required/>  </td></tr>
+                        </table>
+                        <p><input type="submit" value="Submit" /></p>
+                    </form>
+				</ul>
+			</li>
+		</ul>
+	</div>
+
+	<!-- end sidebar -->
+{% endblock %}

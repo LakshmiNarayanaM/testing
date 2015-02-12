@@ -1,0 +1,32 @@
+{% extends "form_base.html" %}
+{% block midpart %}
+{% if added or edit_done %}
+
+    Book {% if added %} Added{% else %} Changed {% endif %} Successfully..... <input type="button" onclick="close_window()" value="Close" />
+
+{% else %}
+    <p style="font-size:15px;"><b>{% if edit %}Edit{% else %} Add {% endif %} Book</b></p>
+
+{% if edit %}
+
+    <form action="/deo/edit_book/?book_id={{ book_id }}" method="post" enctype="multipart/form-data">{% csrf_token %}
+{% else %}
+
+    <form action="/deo/add_book/?id={{inst_id}}" method="post" enctype="multipart/form-data">{% csrf_token %}
+{% endif %}
+
+        <table border="0" cellspacing="5" cellpadding="5" style="width:900px;text-align:left;">
+                {% for field in form %}
+                <tr>
+                <td>{{ field.label_tag }} :{% if field.errors %}<p style="color:red;">{{ field.errors|striptags }}</p>{% endif %}</td>
+                <td>{{ field }}<br />{% if field.help_text %} {{ field.help_text }}<br /> {% endif %}</td>
+                </tr>
+                {% endfor %}
+        </table>
+
+        <p><input type="submit" value="{% if edit %}Update{% else %}Add{% endif %}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="Close" onclick="window.close()" /></p>
+
+    </form>
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,377 @@
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import Context, loader,RequestContext
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponseRedirect,HttpResponse,Http404
+from django.core.mail import send_mail, EmailMessage, BadHeaderError
+from django.contrib.auth import authenticate, login, logout
+from schools.models import *
+from library.models import *
+from library.forms import *
+from datetime import *
+
+def home(request):
+    
+    return render_to_response('home.html',locals(),context_instance=RequestContext(request))
+
+def sign_in(request,next=''):
+    if next=='':
+        next=request.GET.get('next','')
+    if request.method =="POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(username=request.POST['username'],password=request.POST['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request,user)
+                    if  LibraryUsers.objects.filter(user=user).exists():
+                        usertype = LibraryUsers.objects.get(user=user)
+                        if usertype.user_type.name == 'Librarian':
+                                return HttpResponseRedirect('/librarian/')
+                        elif usertype.user_type.name == 'DEO':
+                                return HttpResponseRedirect('/deo/')
+                        elif usertype.user_type.name == 'Staff':
+                                return HttpResponseRedirect('/staff/')
+                        elif usertype.user_type.name == 'Student':
+                                return HttpResponseRedirect('/student/')
+                        else:
+                            return HttpResponseRedirect('/home/')
+                    else:
+                        error = "Sorry, You are not authorized to login"
+                        form = LoginForm(request.POST)
+                        return render_to_response('login.html',{'form':form,'error':error,'next':next},context_instance=RequestContext(request))
+                else:
+                    error="Sorry, you are not authenticated"
+                    form = LoginForm(request.POST)
+                    return render_to_response('login.html',{'form':form,'error':error,'next':next},context_instance=RequestContext(request))
+            else:
+                error = "Sorry, invalid username or password"
+                form = LoginForm(request.POST)
+                return render_to_response('login.html',{'form':form,'error':error,'next':next},context_instance=RequestContext(request))
+        else:
+            form= LoginForm()
+            return render_to_response('login.html',{'form':form,'next':next},context_instance=RequestContext(request))
+    else:
+        form=LoginForm()
+    return render_to_response('login.html',{'form':form,'next':next},context_instance=RequestContext(request))
+
+
+def sign_out(request):
+
+    logout(request)
+    redirect_to=request.GET.get("next"," ")
+    try:
+            del request.session['user_id']
+    except KeyError:
+            pass
+    return HttpResponseRedirect('/login/')
+
+
+########## DEO functionality starts here ###########
+def deo_home(request):
+    institution = Institution.objects.get(id=1)
+    cat_id = request.GET.get('cat_id')
+    search = request.GET.get('search')
+    RightBarcategories = BookCategory.objects.filter(institution = institution)
+    
+    deo = LibraryUsers.objects.get(user=request.user,user_type__name='DEO')
+    if search:
+        books = Book.objects.filter(title__icontains=search)
+        return render_to_response('deo_home.html',{'deo':deo, 'institution':institution ,'books': books,'RightBarcategories':RightBarcategories,'search':search },context_instance=RequestContext(request))
+
+    if cat_id:
+        categories = BookCategory.objects.filter(institution = institution, active = 2, id=cat_id)
+    else:
+        categories = BookCategory.objects.filter(institution = institution, active = 2)
+    return render_to_response('deo_home.html',{'deo':deo, 'institution':institution ,'categories': categories,'RightBarcategories':RightBarcategories },context_instance=RequestContext(request))
+
+
+def add_book(request):
+    inst_id = request.GET.get('id')
+    BookForm = make_book_form(inst_id)
+    if request.method == "POST":
+        form = BookForm(request.POST)
+        if form.is_valid():
+            f=form.save(commit=False)
+            instobj = Institution.objects.get(id=int(inst_id))
+            book_cat = BookCategory.objects.get(id=request.POST.get('book_category'),institution=instobj)
+            f.title = request.POST.get('title')
+            f.author = request.POST.get('author')
+            f.publisher = request.POST.get('publisher')
+            f.keyword = request.POST.get('keyword')
+            f.isbn_code = request.POST.get('isbn_code')
+            f.year_of_pub = request.POST.get('year_of_pub')
+            f.book_cateory = book_cat
+            f.institution = instobj
+            f.save()
+            return render_to_response('add_book.html',{'added':True},context_instance=RequestContext(request))
+        else:
+            form = BookForm(request.POST)
+        return render_to_response('add_book.html',{'form':form, 'inst_id':inst_id},context_instance=RequestContext(request))
+    else:
+        form = BookForm()
+    return render_to_response('add_book.html',{'form':form,'inst_id':inst_id},context_instance=RequestContext(request))
+
+
+def edit_book(request,book_id=''):
+    if book_id=='':
+        book_id=request.GET.get('book_id','')
+    inst_id = request.GET.get('id')
+    book=Book.objects.get(id=book_id)
+    BookForm = make_book_form(inst_id)
+    if request.method == "POST":
+        form = BookForm(request.POST,instance=book)
+        if form.is_valid():
+            instobj = Institution.objects.get(id=int(inst_id))
+            book_cat = BookCategory.objects.get(id=request.POST.get('book_category'),institution=instobj)
+            f=form.save(commit=False)
+            f.title = request.POST.get('title')
+            f.author = request.POST.get('author')
+            f.publisher = request.POST.get('publisher')
+            f.keyword = request.POST.get('keyword')
+            f.isbn_code = request.POST.get('isbn_code')
+            f.year_of_pub = request.POST.get('year_of_pub')
+            f.book_cateory = book_cat
+            f.save()
+            return render_to_response('add_book.html',{'edit_done':True},context_instance=RequestContext(request))
+        else:
+            form = BookForm(request.POST)
+        return render_to_response('add_book.html',{'form':form,'edit':True,'book_id':book_id,'inst_id':inst_id},context_instance=RequestContext(request))
+    else:
+        form = BookForm(instance=book)
+    return render_to_response('add_book.html',{'form':form,'edit':True,'book_id':book_id,'inst_id':inst_id},context_instance=RequestContext(request))
+
+def remove_book(request):
+    book_id = request.GET.get('book_id','')
+    cat_id = request.GET.get('cat_id','')
+    if book_id:
+        book_obj = Book.objects.get(id=book_id)
+        book_obj.active = 0
+        book_obj.save()
+    if cat_id:
+        cat_obj = BookCategory.objects.get(id=cat_id)
+        cat_obj.active = 0
+        cat_obj.save()
+    return HttpResponseRedirect('/deo/')
+
+
+def add_bookcategory(request):
+    inst_id = request.GET.get('id')
+    form = BookCategoryForm()
+    if request.method == "POST":
+        form = BookCategoryForm(request.POST)
+        if form.is_valid():
+            f=form.save(commit=False)
+            instobj = Institution.objects.get(id=int(inst_id))
+            f.institution = instobj
+            f.name = request.POST.get('name')
+            f.active = request.POST.get('active')
+            f.save()
+            return render_to_response('add_bookcategory.html',{'added':True},context_instance=RequestContext(request))
+        else:
+            form = BookCategoryForm(request.POST)
+        return render_to_response('add_bookcategory.html',{'form':form, 'inst_id':inst_id},context_instance=RequestContext(request))
+    else:
+        form = BookCategoryForm()
+    return render_to_response('add_bookcategory.html',{'form':form,'inst_id':inst_id},context_instance=RequestContext(request))
+
+
+def edit_bookcategory(request,cat_id=''):
+    if cat_id=='':
+        cat_id=request.GET.get('cat_id','')
+    inst_id = request.GET.get('id')
+    bookcat=BookCategory.objects.get(id=cat_id)
+    form = BookCategoryForm()
+    if request.method == "POST":
+        form = BookCategoryForm(request.POST,instance=bookcat)
+        if form.is_valid():
+            instobj = Institution.objects.get(id=int(inst_id))
+            f=form.save(commit=False)
+            f.institution = instobj
+            f.name = request.POST.get('name')
+            f.active = request.POST.get('active')
+            f.save()
+            return render_to_response('add_bookcategory.html',{'edit_done':True},context_instance=RequestContext(request))
+        else:
+            form = BookCategoryForm(request.POST)
+        return render_to_response('add_bookcategory.html',{'form':form,'edit':True,'cat_id':cat_id,'inst_id':inst_id},context_instance=RequestContext(request))
+    else:
+        form = BookCategoryForm(instance=bookcat)
+    return render_to_response('add_bookcategory.html',{'form':form,'edit':True,'cat_id':cat_id,'inst_id':inst_id},context_instance=RequestContext(request))
+########## DEO functionality ends here ###########
+
+
+########## Staff functionality starts here ###########
+
+def staff_home(request):
+    institution = Institution.objects.get(id=1)
+    staff = LibraryUsers.objects.get(user=request.user,user_type__name='Staff')
+    search = request.GET.get('search')
+    if search:
+        books = Book.objects.filter(title__icontains=search)
+        return render_to_response('staff_home.html',{'staff':staff, 'institution':institution ,'books': books,'search':search },context_instance=RequestContext(request))
+    else:
+        latest_books = Book.objects.filter(active=2).order_by('-pk')[:5]
+        return render_to_response('staff_home.html',{'staff':staff, 'institution':institution,'latest_books':latest_books },context_instance=RequestContext(request))
+
+def check_book_availability(book_id,sdate,edate):
+    book = Book.objects.get(id=book_id)
+    bc = BooksCopies.objects.get(book=book)
+    bb = Books_Borrowed.objects.filter(book=book, status__in= [0,2,3], issue_date__lte=sdate, return_date__gte=edate)
+    books_av = bc.num_of_copies - bb.count()
+    if  books_av > 0:
+        return True
+    else:
+        return False
+
+def add_advancebook(request, book_id=''):
+    
+    book_id = request.GET.get('book_id')
+    form = AdvanceBookForm()
+    if request.method == "POST":
+        form = AdvanceBookForm(request.POST)
+        sdate = request.POST.get('from_date')
+        edate = request.POST.get('end_date')
+        if form.is_valid(): 
+            book_avail = check_book_availability(book_id,sdate,edate)
+            if book_avail:
+                f=form.save(commit=False)
+                bookobj = Book.objects.get(id=book_id)
+                f.book = bookobj
+                f.start_date = sdate
+                f.end_date = edate
+                f.booked_by = request.user
+                f.save()
+                return render_to_response('add_advancebook.html',{'added':True},context_instance=RequestContext(request))
+            else:
+                error = "Book is not available in these dates"
+                return render_to_response('add_advancebook.html',{'form':form,'book_id':book_id,'error':error},context_instance=RequestContext(request))
+        else:
+            form = AdvanceBookForm(request.POST)
+        return render_to_response('add_advancebook.html',{'form':form,'book_id':book_id},context_instance=RequestContext(request))
+        
+    else:
+        form = AdvanceBookForm()
+    return render_to_response('add_advancebook.html',{'form':form,'book_id':book_id},context_instance=RequestContext(request))
+
+
+def request_for_book(request):
+    bookname = request.POST.get('bookname')
+    author = request.POST.get('author')
+    user = User.objects.get(id = request.user.id)
+    requestObj = BookRequest.objects.create(book_name = bookname, author = author, requested_by = user)
+    usertype = LibraryUsers.objects.get(user = request.user)
+    return render_to_response('book_request.html',{requestObj:requestObj, 'usertype':usertype},context_instance=RequestContext(request))
+
+
+########## Staff functionality ends here ###########
+
+
+########## Student functionality starts here ###########
+
+def student_home(request):
+    print "iiiiiiiiiiii", request
+    institution = Institution.objects.get(id=1)
+    student = LibraryUsers.objects.get(user=request.user,user_type__name='Student')
+    search = request.GET.get('search')
+    if search:
+        books = Book.objects.filter(title__icontains=search)
+        return render_to_response('student_home.html',{'student':student, 'institution':institution ,'books': books,'search':search },context_instance=RequestContext(request))
+    else:
+        latest_books = Book.objects.filter(active=2).order_by('-pk')[:5]
+        return render_to_response('student_home.html',{'student':student, 'institution':institution,'latest_books':latest_books },context_instance=RequestContext(request))
+        
+        
+
+
+######## librarian views starts here ###############
+
+def librarian(request):
+   search= request.GET.get('search')
+   c= request.GET.get('c')
+   institution = Institution.objects.get(id=1)
+   categories = BookCategory.objects.filter(institution = institution)
+   item_list = Book.objects.filter(institution = institution)
+   if search:
+       item_list = item_list.filter(title__icontains =search)
+   if c:
+       item_list = item_list.filter(book_category__id= c)
+   return render_to_response('librarian_home.html',locals(), context_instance=RequestContext(request))
+
+
+def issue(request, id=''):
+   if id == "":
+       request.GET.get('id')
+   book = Book.objects.get(id=id)
+   return render_to_response('issue.html',locals(), context_instance=RequestContext(request))
+
+
+def issue_book(request, bid=""):
+    if bid == "":
+        request.POST.get('bid')
+    book = Book.objects.get(id=bid)
+    sid = request.POST.get('sid')
+    tid = request.POST.get('tid')
+    added = False
+    if sid:
+        try:
+            student = Student.objects.get(child__uid=sid)
+        except:
+            error="Student not exists"
+            pass
+    if tid:
+        try:
+            staff = Staff.objects.get(uid=tid)
+        except:
+            error="Staff not exists"
+            pass
+    if sid:
+        Books_Borrowed.objects.create(
+                                      book=book,
+                                      issue_date = date.today(), 
+                                      return_date= date.today()+timedelta(15),
+                                      content_type=ContentType.objects.get(name="student"),
+                                      object_id = sid,
+                                      status = 0)
+        added = True
+    if tid:
+        Books_Borrowed.objects.create(
+                                      book=book,
+                                      issue_date = date.today(), 
+                                      return_date= date.today()+timedelta(15),
+                                      content_type=ContentType.objects.get(name="staff"),
+                                      object_id = tid,
+                                      status = 0)
+        added = True
+    return render_to_response('issue.html',locals(), context_instance=RequestContext(request))
+
+
+
+def receive_book(request):
+    student=request.GET.get('student')
+    std = ''
+    staff = ''
+    if student:
+        try:
+            std = Student.objects.get(child__uid = student)
+        except:
+            staff = Staff.objects.get(uid=student)
+    if std:
+        bb = Books_Borrowed.objects.filter(content_type = ContentType.objects.get(name="student"),object_id=std.child.uid, status=0)
+    else:
+        error = "No student/staff Found based on your search"
+    if staff:
+        bb = Books_Borrowed.objects.filter(content_type = ContentType.objects.get(name="staff"),object_id=staff.uid, status=0)
+    else:
+        error = "No Staff/student Found based on your search"
+    return render_to_response('receive_book.html',locals(), context_instance=RequestContext(request))
+
+
+
+def recieved(request, bid =''):
+    next = request.GET.get('next')
+    if bid == "":
+        bid = request.POST.get('bid')
+    bb = Books_Borrowed.objects.get(id=bid)
+    bb.status = 1
+    bb.save()
+    return HttpResponseRedirect(next)

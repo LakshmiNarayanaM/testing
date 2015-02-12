@@ -1,0 +1,423 @@
+
+/*
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+*/
+
+body {
+	margin: 0;
+	padding: 0;
+	background: #FFFFFF url(../images/img01.gif) repeat-x;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 13px;
+	color: #666666;
+}
+
+form {
+	margin: 0;
+	padding: 0;
+}
+
+fieldset {
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+input, textarea, select {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 13px;
+	color: #666666;
+}
+
+h1, h2, h3 {
+	margin: 0;
+	font-weight: normal;
+	color: #4F789F;
+}
+
+h1 {
+	letter-spacing: -1px;
+	font-size: 2.6em;
+}
+
+h2 {
+	font-size: 1.8em;
+}
+
+h3 {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+p, ul, ol {
+	margin-bottom: 1.6em;
+}
+
+p {
+}
+
+blockquote {
+	font-style: italic;
+}
+
+ul {
+}
+
+ol {
+}
+
+a {
+	color: #4F789F;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+small {
+}
+
+hr {
+	display: none;
+}
+
+img {
+	border: none;
+}
+
+img.left {
+	float: left;
+	margin: 0 15px 0 0;
+}
+
+img.right {
+	float: left;
+	margin: 0 0 0 15px;
+}
+
+/* Header */
+
+#header {
+	width: 900px;
+	height: 300px;
+	margin: 0 auto;
+	padding: 0 40px;
+	background: url(../images/img03.jpg) no-repeat left bottom;
+}
+
+/* Menu */
+
+#menu {
+	width: 900px;
+	height: 100px;
+}
+
+#menu ul {
+	margin: 0;
+	padding: 25px 0;
+	list-style: none;
+}
+
+#menu li {
+	display: inline;
+}
+
+#menu a {
+	display: block;
+	float: left;
+	width: 150px;
+	height: 38px;
+	padding: 12px 0 0 0;
+	text-align: center;
+	text-decoration: none;
+	text-transform: lowercase;
+	font-size: 1.8em;
+}
+
+#menu .active a {
+	background: #B3EAFD url(../images/img02.jpg) no-repeat;
+}
+
+/* Logo */
+
+#logo {
+	clear: both;
+	width: 900px;
+	height: 200px;
+}
+
+#logo h1, #logo h2 {
+	text-transform: lowercase;
+	font-style: italic;
+}
+
+#logo h1 {
+	padding: 70px 0 0 0;
+	font-size: 4em;
+}
+
+#logo h2 {
+	padding: 0 0 0 100px;
+	font-size: 2em;
+}
+
+#logo a {
+	text-decoration: none;
+	color: #479EF3;
+}
+
+/* Page */
+
+#page {
+	width: 900px;
+	margin: 0 auto;
+	padding: 30px 0;
+}
+
+/* Content */
+
+#content {
+	float: left;
+	width: 580px;
+}
+
+.post {
+}
+
+.post .date {
+	float: left;
+	width: 70px;
+	margin: 0 15px 0 0;
+	padding: 2px 0;
+	background: #C9E5FC;
+	border: 1px solid #C9E5FC;
+	text-align: center;
+	font-size: 11px;
+	color: #3F4C6B;
+}
+
+.post .date b {
+	display: block;
+	padding: 5px 0;
+	background: #F4FAFE;
+	font-size: 24px;
+	font-weight: normal;
+}
+
+.post .title {
+	margin: 0;
+}
+
+.post .meta {
+	margin: 0 0 0 0;
+	color: #B2B7C4;
+}
+
+.post .entry {
+	padding: 20px 0;
+	line-height: 200%;
+}
+
+/* Sidebar */
+
+#sidebar {
+	float: right;
+	width: 280px;
+}
+
+#sidebar ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#sidebar li {
+	margin-bottom: 20px;
+	padding: 20px 20px 40px 20px;
+	background: url(../images/img04.jpg) no-repeat;
+}
+
+#sidebar li ul {
+	line-height: 240%;
+}
+
+#sidebar li li {
+	margin: 0;
+	padding: 0;
+	background: none;
+	padding-left: 15px;
+	background: url(../images/img05.gif) no-repeat left center;
+}
+
+#sidebar h2 {
+	margin-bottom: 20px;
+	text-transform: lowercase;
+	color: #4F789F;
+}
+
+#s {
+	width: 160px;
+}
+
+/* Footer */
+
+#footer {
+	clear: both;
+	padding: 40px 0;
+	background: #EAF1F7;
+	border-top: 5px solid #A2C9EA;
+	text-align: center;
+}
+
+#footer p {
+	margin: 0;
+	color: #76AEDB;
+}
+
+#footer a {
+	color: #76AEDB;
+}
+
+
+.addbook {
+	float: right;
+	-moz-box-shadow:inset 0px 1px 0px 0px #fce2c1;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #fce2c1;
+	box-shadow:inset 0px 1px 0px 0px #fce2c1;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffc477), color-stop(1, #fb9e25) );
+	background:-moz-linear-gradient( center top, #ffc477 5%, #fb9e25 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffc477', endColorstr='#fb9e25');
+	background-color:#ffc477;
+	-webkit-border-top-left-radius:28px;
+	-moz-border-radius-topleft:28px;
+	border-top-left-radius:28px;
+	-webkit-border-top-right-radius:28px;
+	-moz-border-radius-topright:28px;
+	border-top-right-radius:28px;
+	-webkit-border-bottom-right-radius:28px;
+	-moz-border-radius-bottomright:28px;
+	border-bottom-right-radius:28px;
+	-webkit-border-bottom-left-radius:28px;
+	-moz-border-radius-bottomleft:28px;
+	border-bottom-left-radius:28px;
+	text-indent:0;
+	border:1px solid #eeb44f;
+	display:inline-block;
+	color:#ffffff;
+	font-family:Verdana;
+	font-size:15px;
+	font-weight:bold;
+	font-style:italic;
+	height:19px;
+	line-height:19px;
+	width:100px;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:1px 1px 0px #cc9f52;
+}
+.addbook:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #fb9e25), color-stop(1, #ffc477) );
+	background:-moz-linear-gradient( center top, #fb9e25 5%, #ffc477 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fb9e25', endColorstr='#ffc477');
+	background-color:#fb9e25;
+}.addbook:active {
+	position:relative;
+	top:1px;
+}
+
+
+.issue {
+	-moz-box-shadow:inset 0px 1px 0px 0px #d9fbbe;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #d9fbbe;
+	box-shadow:inset 0px 1px 0px 0px #d9fbbe;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #b8e356), color-stop(1, #a5cc52) );
+	background:-moz-linear-gradient( center top, #b8e356 5%, #a5cc52 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8e356', endColorstr='#a5cc52');
+	background-color:#b8e356;
+	-webkit-border-top-left-radius:20px;
+	-moz-border-radius-topleft:20px;
+	border-top-left-radius:20px;
+	-webkit-border-top-right-radius:20px;
+	-moz-border-radius-topright:20px;
+	border-top-right-radius:20px;
+	-webkit-border-bottom-right-radius:20px;
+	-moz-border-radius-bottomright:20px;
+	border-bottom-right-radius:20px;
+	-webkit-border-bottom-left-radius:20px;
+	-moz-border-radius-bottomleft:20px;
+	border-bottom-left-radius:20px;
+	text-indent:-2px;
+	display:inline-block;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	font-style:normal;
+	height:19px;
+	line-height:19px;
+	width:67px;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:1px 1px 0px #86ae47;
+}
+.issue:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #a5cc52), color-stop(1, #b8e356) );
+	background:-moz-linear-gradient( center top, #a5cc52 5%, #b8e356 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#a5cc52', endColorstr='#b8e356');
+	background-color:#a5cc52;
+}.issue:active {
+	position:relative;
+	top:1px;
+}
+
+
+.rce {
+	-moz-box-shadow:inset 0px 0px 0px 0px #cae3fc;
+	-webkit-box-shadow:inset 0px 0px 0px 0px #cae3fc;
+	box-shadow:inset 0px 0px 0px 0px #cae3fc;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #79bbff), color-stop(1, #4197ee) );
+	background:-moz-linear-gradient( center top, #79bbff 5%, #4197ee 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff', endColorstr='#4197ee');
+	background-color:#79bbff;
+	-webkit-border-top-left-radius:20px;
+	-moz-border-radius-topleft:20px;
+	border-top-left-radius:20px;
+	-webkit-border-top-right-radius:20px;
+	-moz-border-radius-topright:20px;
+	border-top-right-radius:20px;
+	-webkit-border-bottom-right-radius:20px;
+	-moz-border-radius-bottomright:20px;
+	border-bottom-right-radius:20px;
+	-webkit-border-bottom-left-radius:20px;
+	-moz-border-radius-bottomleft:20px;
+	border-bottom-left-radius:20px;
+	text-indent:0;
+	border:2px solid #469df5;
+	display:inline-block;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:18px;
+	font-weight:bold;
+	font-style:normal;
+	height:33px;
+	line-height:33px;
+	width:141px;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:-1px 1px 0px #287ace;
+}
+.rce:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #4197ee), color-stop(1, #79bbff) );
+	background:-moz-linear-gradient( center top, #4197ee 5%, #79bbff 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#4197ee', endColorstr='#79bbff');
+	background-color:#4197ee;
+}.rce:active {
+	position:relative;
+	top:1px;
+}
+
+.ctab{ border-left:1px solid #ccc; border-top:1px solid #ccc; font-size:13px; font-family:Arial, Helvetica, sans-serif;}
+.c1{ border-right: 1px solid #CCCCCC; border-bottom: 1px solid #CCCCCC; padding:4px 0;}
+.nobordR{border-right:none;}

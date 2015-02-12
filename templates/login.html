@@ -1,0 +1,22 @@
+{% extends "index.html" %}
+{% block mid %}
+<div id="content">
+     <form method="post" action="/login/{% if next %}?next={{ next }}{% endif %}" >{% csrf_token %}
+    {% for field in form %}
+        <div class="nf-box">
+        <div class="nf-boxlefttext">{{ field.label_tag }} :</div>
+        <div class="nf-fieldbox">{{ field }}{% if field.errors %}<br />{{ field.errors }}{% endif %}</div>
+        </div>
+    {% endfor %}
+    <div class="nf-box">
+        <div class="nf-boxlefttext"></div>
+        <div class="nf-fieldbox"><input type="submit" value="Sign In"/>
+    </div>
+    </div>
+        {% if error %}
+        <p style="text-align:center;color:red;">{{ error }}</p>
+        {% endif %}
+</div>
+{% endblock %}
+{% block rightcontent %}
+{% endblock %}
